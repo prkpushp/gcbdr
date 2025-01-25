@@ -1,0 +1,81 @@
+provider "google" {
+  project = "qwiklabs-gcp-04-34e2d4c38323" # Replace with your project ID
+  region  = "us-east1" # Replace with an allowed region
+}
+
+# Create a custom network
+resource "google_compute_network" "custom_network" {
+  name                    = "custom-network"
+  auto_create_subnetworks = false
+}
+
+# Create subnetwork A
+resource "google_compute_subnetwork" "subnet_a" {
+  name          = "subnet-a"
+  ip_cidr_range = "10.0.1.0/24"
+  region        = "us-east1" # Replace with an allowed region
+  network       = google_compute_network.custom_network.id
+}
+
+# Create subnetwork B
+resource "google_compute_subnetwork" "subnet_b" {
+  name          = "subnet-b"
+  ip_cidr_range = "10.0.2.0/24"
+  region        = "us-east1" # Replace with an allowed region
+  network       = google_compute_network.custom_network.id
+}
+
+# Create a single-zone VM
+resource "google_compute_instance" "vm_zone_a" {
+  name         = "vm-zone-a"
+  machine_type = "e2-micro"
+  zone         = "us-east1-b" # Replace with an allowed zone
+
+  boot_disk {
+    initialize_params {
+      image = "projects/debian-cloud/global/images/family/debian-11"
+    }
+  }
+
+  network_interface {
+    network    = google_compute_network.custom_network.id
+    subnetwork = google_compute_subnetwork.subnet_a.id
+  }
+}
+
+# Create a multi-zonal regional disk
+resource "google_compute_region_disk" "multi_zonal_disk" {
+  name         = "multi-zonal-disk"
+  size         = 200 # Size in GB
+  type         = "pd-standard"
+  region       = "us-east1" # Replace with an allowed region
+  replica_zones = [
+    "us-east1-b", # Replace with allowed zones
+    "us-east1-c"
+  ]
+}
+
+# Create a VM using the multi-zonal disk
+resource "google_compute_instance" "vm_multi_zone" {
+  name         = "vm-multi-zone"
+  machine_type = "e2-micro"
+  zone         = "us-east1-b" # Replace with an allowed zone
+
+  # Attach the multi-zonal disk as an additional disk
+  attached_disk {
+    source      = google_compute_region_disk.multi_zonal_disk.id
+    mode        = "READ_WRITE"
+  }
+
+  boot_disk {
+    initialize_params {
+      image = "projects/debian-cloud/global/images/family/debian-11"
+    }
+  }
+
+  network_interface {
+    network    = google_compute_network.custom_network.id
+    subnetwork = google_compute_subnetwork.subnet_b.id
+  }
+}
+
