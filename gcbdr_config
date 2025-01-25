@@ -5,5 +5,14 @@ gcloud backup-dr backup-vaults create backup-vault1     --location=us-east1     
 
 #Create Backup Policy
 
-#Enable API
+#gcloud compute disks create multi-zonal-disk     --size=500GB     --zone=us-east1-b
+ERROR: (gcloud.compute.disks.create) Could not fetch resource:
+ - Location ZONE:us-east1-b violates constraint constraints/gcp.resourceLocations on the resource projects/qwiklabs-gcp-00-c653f8a9e4de/zones/us-east1-b/disks/multi-zonal-disk.
 
+student_04_578496634469@cloudshell:~ (qwiklabs-gcp-00-c653f8a9e4de)$ gcloud compute disks create multi-zonal-disk     --size=500GB     --zone=us-east1-c
+ERROR: (gcloud.compute.disks.create) Could not fetch resource:
+ - Location ZONE:us-east1-c violates constraint constraints/gcp.resourceLocations on the resource projects/qwiklabs-gcp-00-c653f8a9e4de/zones/us-east1-c/disks/multi-zonal-disk.
+
+
+#Enable API
+gcloud services enable "cloudbackup.googleapis.com"
