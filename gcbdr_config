@@ -1,0 +1,9 @@
+# Create vault
+
+gcloud backup-dr backup-vaults create backup-vault1     --location=us-east1     --backup-min-enforced-retention=30d --project=qwiklabs-gcp-04-34e2d4c383
+23
+
+#Create Backup Policy
+
+#Enable API
+
