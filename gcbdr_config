@@ -11,6 +11,7 @@ TIME_ZONE=UTC
 START_TIME=00
 END_TIME=24
 
+#provide backupadmin role to current user
 #create vault
 gcloud backup-dr backup-vaults create $BACKUPVAULT_NAME     --location=us-east4     --backup-min-enforced-retention=30d --project="$PROJECT_ID"
 
