@@ -14,7 +14,7 @@ END_TIME=24
 #create vault
 gcloud backup-dr backup-vaults create $BACKUPVAULT_NAME     --location=us-east4     --backup-min-enforced-retention=30d --project="$PROJECT_ID"
 
-
+#provide vault SA compute instance admin
 #Create Backup Policy : hourly every 6 hours 00 utc start
 
   gcloud backup-dr backup-plans create $BACKUP_PLAN_NAME \
