@@ -1,19 +1,19 @@
 #!/bin/bash
 #Define Variables
 SOURCE_VM_NAME=$1
-SOURCE_VM_PROJECT=qwiklabs-gcp-04-34e2d4c38323
-BRS_PROJECT=qwiklabs-gcp-04-34e2d4c38323
+SOURCE_VM_PROJECT=qwiklabs-gcp-01-bbc5fe19a7e0
+BRS_PROJECT=qwiklabs-gcp-01-bbc5fe19a7e0
 TARGET_VM_PROJECT="$SOURCE_VM_PROJECT"
-VAULT_NAME=backup-vault
+VAULT_NAME=backup-vault1
 SOURCE_VM_NETWORK_PROJECT="$SOURCE_VM_PROJECT"
 SOURCE_VM_VPC=custom-network
 EPOCH_TIME=`date +%s`
 RESTORE_SUFFIX="-restore-"
 RESTORED_VM_NAME="${SOURCE_VM_NAME}${RESTORE_SUFFIX}${EPOCH_TIME}"
 SOURCE_VM_SUBNET=subnet-b
-TARGET_ZONE=us-east1-b
-TARGET_ZONE2=us-east1-c
-TIMEOUT=600  # Timeout in seconds (10 minutes)
+TARGET_ZONE=us-east4-b
+TARGET_ZONE2=us-east4-c
+TIMEOUT=300  # Timeout in seconds (10 minutes)
 INTERVAL=10  # Interval between checks (10 seconds)
 
 
@@ -32,7 +32,7 @@ fi
 VM_VAULT_DATASOURCE=$(gcloud backup-dr data-sources list \
   --project=$BRS_PROJECT \
   --backup-vault=$VAULT_NAME \
-  --location=us-east1 \
+  --location=us-east4 \
   --filter="dataSourceGcpResource.computeInstanceDatasourceProperties.name~'${SOURCE_VM_NAME}$'" \
   --format="value(name)")
 
@@ -119,7 +119,7 @@ gcloud backup-dr backups restore compute $BKP2RSTR \
     --target-zone=$TARGET_ZONE \
     --target-project=$TARGET_VM_PROJECT \
     --create-disk=device-name=persistent-disk-1,replica-zones='https://www.googleapis.com/compute/v1/projects/$SOURCE_VM_PROJECT/zones/$TARGET_ZONE https://www.googleapis.com/compute/v1/projects/$SOURCE_VM_PROJECT/zones/$TARGET_ZONE2' \
-    --network-interface=network=projects/$SOURCE_VM_NETWORK_PROJECT/global/networks/$SOURCE_VM_VPC,subnet=projects/$SOURCE_VM_NETWORK_PROJECT/regions/us-east1/subnetworks/$SOURCE_VM_SUBNET \
+    --network-interface=network=projects/$SOURCE_VM_NETWORK_PROJECT/global/networks/$SOURCE_VM_VPC,subnet=projects/$SOURCE_VM_NETWORK_PROJECT/regions/us-east4/subnetworks/$SOURCE_VM_SUBNET \
     --log-http \
     --format=json
 EOF
