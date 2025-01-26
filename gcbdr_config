@@ -22,6 +22,19 @@ gcloud backup-dr backup-vaults create $BACKUPVAULT_NAME     --location=us-east4 
   --resource-type=compute.googleapis.com/Instance \
   --backup-vault $BACKUPVAULT_NAME --backup-rule rule-id=$RULE_NAME,retention-days=$BACKUP_RETENTION,recurrence=$RECURRENCE,hourly-frequency=$HOURS,time-zone=$TIME_ZONE,backup-window-start=$START_TIME,backup-window-end=$END_TIME
 
+#set backup for vm-multi-zone and vm-zone-a
+
+VM_NAME=vm-multi-zone
+VM_ZONE=us-east4-b
+BACKUP_PLAN_ASSOCIATION_NAME=$BACKUP_PLAN_NAME
+BACKUP_PLAN=$BACKUP_PLAN_NAME
+VM_ID=`gcloud compute instances describe $VM_NAME --zone=$VM_ZONE --format="value(id)"`
+
+### FAILING Update backup policy on instances
+gcloud backup-dr backup-plan-associations create "backup-association-name"   --location=$VM_ZONE   --workload-project=$PROJECT_ID   --resource="projects/$PROJECT_ID/zones/$VM_ZONE/instances/vm-multi-zone"   --resource-type="compute/instances"   --backup-plan="projects/$PROJECT_ID/locations/$LOCATION/backupPlans/$BACKUP_PLAN"
+
+
+
 
 #Enable API
 gcloud services enable "backupdr.googleapis.com"
